@@ -92,8 +92,11 @@ public class DirectoryController : MonoBehaviour
     //상위 폴더로 이동
     private void MoveToParentFolder(DirectoryInfo directory)
     {
-        if (directory.Parent == null) return;
+        if (directory.Parent == null)
+        {return;}
 
         UpdateDirectory(directory.Parent);
     }
+}
+
 
