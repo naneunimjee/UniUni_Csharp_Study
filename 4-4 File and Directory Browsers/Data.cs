@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 //파일의 속성(폴더, 파일) - 아이콘 출력용 (파일의 확장자에 따라 세부 구분할 경우 타입 추가)
 public enum DataType { Directory = 0, File } 
-public class Data : MonoBehaviour
+public class Data : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
     [SerializeField]
     private Sprite[] spriteIcons; //아이콘에 적용할 수 있는 Sprite 이미지
@@ -21,8 +22,11 @@ public class Data : MonoBehaviour
 
     private int maxFileNameLength = 25; //파일 이름 최대 길이
 
-    public void Setup(string fileName, DataType dataType)
+    private DirectoryController directoryController;
+
+    public void Setup(DirectoryController controller, string fileName, DataType dataType)
     {
+        directoryControllerontroller = controller;
         //만약 Panel 오브젝트의 Image 컴포넌트를 삭제하지않으면 PanelData가 Get된다.
         imageIcon = GetComponentInChildren<Image>();
         textDataName = GetComponentInChildren<TextMeshProUGUI>();
@@ -56,6 +60,21 @@ public class Data : MonoBehaviour
         {
             textDataName.color = Color.white;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        textDataName.text = Color.red;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        directoryController.UpdateInputs(fileName);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        SetTextColor();
     }
 
 }

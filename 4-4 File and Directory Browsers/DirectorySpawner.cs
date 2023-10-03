@@ -17,10 +17,13 @@ public class DirectorySpawner : MonoBehaviour
     [SerializeField]
     private Transform parentContent; //생성되는 TextUI가 저장되는 부모 오브젝트
 
+    private DirectoryController directoryController; //DirectoryController 주소 정보, Data 클래스에 전달
+
     private List<Data> fileList;
 
-    public void Setup()
+    public void Setup(DirectoryController controller)
     {
+        directoryController = controller;
         //현재 폴더에 존재하는 디렉토리, 파일 오브젝트 리스트
         fileList = new List<Data>();
     }
@@ -81,7 +84,7 @@ public class DirectorySpawner : MonoBehaviour
         clone.transform.localScale = Vector3.one;
 
         Data data = clone.GetComponent<Data>();
-        data.Setup(fileName, type);
+        data.Setup(directoryController, fileName, type);
 
         //파일 정렬, 삭제를 위해 리스트에 저장
         fileList.Add(data);
