@@ -1,4 +1,2 @@
-# UniUni_Csharp_Study 🎮
-유튜브 고박사님의 C#강의를 듣고 내용을 정리해보았습니다.
-
-[유튜브 링크](https://www.youtube.com/watch?v=YKiTGbPIZKQ&list=PLC2Tit6NyVicT5cCqILMWXpXVEoM9ufyH)
+# Unity_Study 🎮
+유튜브 강의 및 교재, 독학 등을 통해 C#과 유니티 관련 파일들을 저장한 리포지토리입니다.
