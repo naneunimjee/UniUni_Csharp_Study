@@ -23,7 +23,7 @@ public class EnemyMove : MonoBehaviour
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
         //prevent falling
-        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.5f, rigid.position.y);
+        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.5f, rigid.position.y - 1);
 
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));

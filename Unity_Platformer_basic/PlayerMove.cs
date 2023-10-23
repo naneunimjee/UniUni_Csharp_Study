@@ -18,38 +18,28 @@ public class PlayerMove : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    //Stop Speed
-    void Update() //지속적으로 호출, 보통 **단발적인 키 입력**을 다룰 때 사용
+
+    void Update() //단발적인 호출을 위해 사용
     {
-
-
-        //jump
-
-        if (Input.GetButtonDown("Jump") && !animator.GetBool("isJumping"))
+        //Jump & infinite Jump limit
+        if (Input.GetButtonDown("Jump") && animator.GetBool("isJumping") == false)
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             animator.SetBool("isJumping", true);
+
         }
 
-
+        //미끄러짐 방지
         if (Input.GetButtonUp("Horizontal"))
-        {
-            //rigid.velocity.x 는 방향뿐만아니라 크기까지 포함하는 표현
-            //크기를 단위로 만들어주어야함.
-            //normalized 를 쓰면 벡터 크기를 1로 만들 수 있음.
-            //GetAxisRaw와 거의 비슷
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.7f, rigid.velocity.y);
-        }
 
-        //direction change
         if (Input.GetButtonDown("Horizontal"))
         {
             spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-            //Input.GetAxisRaw("Horizontal")==-1이 성립하면 true가 반환
         }
 
-        //Animation transition
         if (Mathf.Abs(rigid.velocity.x) < 0.5)
+
             animator.SetBool("isWalking", false);
 
         else
@@ -75,27 +65,59 @@ public class PlayerMove : MonoBehaviour
 
         else if (rigid.velocity.x < maxSpeed * (-1)) // Left Max Speed
                                                      //velocity : 속도
-        {
-            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
-        }
+            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
         //Landing Platform
         if (rigid.velocity.y < 0)
         {
             Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
-            if (rayHit.collider != null)
+            RaycastHit2D raycast = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
+
+            if (raycast.collider != null)
             {
-                if (rayHit.distance < 0.5f)
-                {
-                    Debug.Log(rayHit.collider.name);
-                    animator.SetBool("isJumping", false);
-                }
+                Debug.Log(raycast.collider.name);
+                animator.SetBool("isJumping", false);
             }
+        }
 
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Debug.Log("적에게 부딪혔어요!");
+            OnDamaged(collision.transform.position);
         }
     }
 
+    void OnDamaged(Vector2 targetPos)
+    {
+        //change layer to PlayerDamaged, Immortal Active
+        gameObject.layer = 9;
+
+        //View Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+
+        //Add force to player gameObject for bouncing back from enemy
+        int force = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(force, 1) * 8, ForceMode2D.Impulse);
+
+        //animation transition
+        animator.SetTrigger("onDamaged");
+
+        Invoke("OffDamaged", 2);
+    }
+
+    void OffDamaged()
+    {
+        //change layer to Player, Mortal Active
+        gameObject.layer = 8;
+
+        //clear transparent Mode
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+
+    }
 }
