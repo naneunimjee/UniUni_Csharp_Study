@@ -7,6 +7,7 @@ public class EnemyMove : MonoBehaviour
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator animator;
+    BoxCollider2D boxCollider;
     public int nextMove;
 
     void Awake()
@@ -14,6 +15,7 @@ public class EnemyMove : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        boxCollider = GetComponent<BoxCollider2D>();
         Invoke("Think", 2);
     }
 
@@ -30,7 +32,6 @@ public class EnemyMove : MonoBehaviour
 
         if (rayHit.collider == null)
         {
-            Debug.Log("위험해~");
             Turn();
         }
     }
@@ -63,4 +64,26 @@ public class EnemyMove : MonoBehaviour
             spriteRenderer.flipX = nextMove == 1;
     }
 
+    public void OnDamaged()
+    {
+        //Sprite Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+
+        //Die Effect Jump
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+        //FlipY
+        spriteRenderer.flipY = true;
+
+        //collider unenable
+        boxCollider.enabled = false;
+
+        //Deactive delay
+        Invoke("DeActive", 3);
+    }
+
+    public void DeActive()
+    {
+        gameObject.SetActive(false);
+    }
 }
