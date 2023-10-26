@@ -81,7 +81,6 @@ public class PlayerMove : MonoBehaviour
 
             if (raycast.collider != null)
             {
-                Debug.Log(raycast.collider.name);
                 animator.SetBool("isJumping", false);
             }
         }
@@ -107,6 +106,11 @@ public class PlayerMove : MonoBehaviour
             {
                 OnDamaged(collision.transform.position);
             }
+        }
+
+        else if (collision.gameObject.tag == "Finish")
+        {
+            gameManager.NextStage();
         }
     }
 
@@ -135,6 +139,7 @@ public class PlayerMove : MonoBehaviour
 
     void OnDamaged(Vector2 targetPos)
     {
+
 
         //health down
         gameManager.HealthDown();
@@ -191,6 +196,10 @@ public class PlayerMove : MonoBehaviour
 
         Debug.Log("게임오버");
 
+    }
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
     }
 
 }
